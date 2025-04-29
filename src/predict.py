@@ -1,8 +1,16 @@
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 from keras.models import load_model
 from config import CONFIG
 from utils import load_data
+
+
+# Создание всех необходимых папок
+os.makedirs(CONFIG["raw_data_path"], exist_ok=True)
+os.makedirs(CONFIG["processed_data_path"], exist_ok=True)
+os.makedirs(os.path.dirname(CONFIG["model_path"]), exist_ok=True)
+
 
 def predict_random_sample():
     # Загрузка модели и данных
@@ -22,6 +30,7 @@ def predict_random_sample():
     plt.imshow(image, cmap='gray')
     plt.title(f"True: {true_label}, Predicted: {predicted_label}")
     plt.show()
+
 
 if __name__ == "__main__":
     predict_random_sample()

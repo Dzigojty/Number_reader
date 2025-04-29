@@ -1,18 +1,38 @@
+import os
+import numpy as np
 import matplotlib.pyplot as plt
+from .config import CONFIG
 from keras.datasets import mnist
 from keras.utils import to_categorical
 
+
 def load_data():
-    (x_train, y_train), (x_test, y_test) = mnist.load_data()
-    # Нормализация
+    # Скачиваем данные в папку data/raw/
+    path = to_categorical(
+        fname=CONFIG["data/raw/"],
+        origin='https://storage.googleapis.com/tensorflow/tf-keras-datasets/mnist.npz',
+        cache_dir=os.path.dirname(CONFIG["data/raw/"]),
+        cache_subdir=''
+    )
+
+        # Загрузка данных из локального файла
+    with np.load(path) as f:
+        x_train, y_train = f['x_train'], f['y_train']
+        x_test, y_test = f['x_test'], f['x_test']
+    
+    # Предобработка
     x_train = x_train.astype('float32') / 255.0
     x_test = x_test.astype('float32') / 255.0
-    # Reshape и one-hot кодирование
-    x_train = x_train.reshape(-1, 784)
-    x_test = x_test.reshape(-1, 784)
-    y_train = to_categorical(y_train, 10)
-    y_test = to_categorical(y_test, 10)
+    
+    # Сохранение предобработанных данных (опционально)
+    np.savez_compressed(
+        os.path.join(CONFIG["processed_data_path"], "mnist_processed.npz"),
+        x_train=x_train, y_train=y_train,
+        x_test=x_test, y_test=y_test
+    )
+    
     return (x_train, y_train), (x_test, y_test)
+
 
 def plot_training_history(history, plot_path):
     plt.figure(figsize=(12, 4))

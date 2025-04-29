@@ -1,8 +1,15 @@
-import tensorflow as tf
+import os
 from keras.models import Sequential
 from keras.layers import Dense
 from utils import load_data, plot_training_history
 from config import CONFIG
+
+
+# Создание всех необходимых папок
+os.makedirs(CONFIG["raw_data_path"], exist_ok=True)
+os.makedirs(CONFIG["processed_data_path"], exist_ok=True)
+os.makedirs(os.path.dirname(CONFIG["model_path"]), exist_ok=True)
+
 
 def build_model():
     model = Sequential()
@@ -10,6 +17,7 @@ def build_model():
     model.add(Dense(CONFIG["hidden_units"][1], activation=CONFIG["activation"]))
     model.add(Dense(CONFIG["num_classes"], activation='softmax'))
     return model
+
 
 def main():
     # Загрузка данных
@@ -38,6 +46,7 @@ def main():
     # Оценка на тестовых данных
     test_loss, test_acc = model.evaluate(x_test, y_test)
     print(f"Test Accuracy: {test_acc:.4f}")
+
 
 if __name__ == "__main__":
     main()
